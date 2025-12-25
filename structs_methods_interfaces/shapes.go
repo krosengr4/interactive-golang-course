@@ -1,21 +1,43 @@
 package main
 
 import (
-	"fmt"
-	"strings"
+	"math"
 )
 
-func Perimeter(width, height float64) float64 {
-	return (2 * width) + (2 * height)
+// Structs for different shapes
+type Square struct {
+	length float64
 }
 
-func main() {
-	h := 5.0
-	w := 3.0
+type Rectangle struct {
+	length float64
+	width  float64
+}
 
-	fmt.Printf("Height is %.2f\nWidth is %.2f\n", h, w)
+type Circle struct {
+	radius float64
+}
 
-	result := Perimeter(h, w)
-	fmt.Println(strings.Repeat("-", 30))
-	fmt.Printf("The perimeter is: %.2f\n", result)
+func (r Rectangle) Perimeter() float64 {
+	return 2*(r.length) + 2*(r.width)
+}
+
+func (r Rectangle) Area() float64 {
+	return r.length * r.width
+}
+
+func (s Square) Perimeter() float64 {
+	return 4 * s.length
+}
+
+func (s Square) Area() float64 {
+	return math.Pow(s.length, 2)
+}
+
+func (c Circle) Perimeter() float64 {
+	return c.radius
+}
+
+func (c Circle) Area() float64 {
+	return math.Pi * math.Pow(c.radius, 2)
 }
