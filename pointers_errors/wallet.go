@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"errors"
 	"fmt"
 	"os"
 	"strconv"
@@ -9,6 +10,8 @@ import (
 )
 
 type Bitcoin int
+
+var ErrInsufficientFunds = errors.New("cannot withdraw, insufficient funds!")
 
 type Wallet struct {
 	Balance Bitcoin
@@ -18,12 +21,14 @@ func (w *Wallet) Deposit(amount Bitcoin) {
 	w.Balance += amount
 }
 
-func (w *Wallet) Withdraw(amount Bitcoin) {
-	if amount <= w.Balance {
-		w.Balance -= amount
-	} else {
-		fmt.Println("ERROR! You do not have that much to withdraw!")
+func (w *Wallet) Withdraw(amount Bitcoin) error {
+
+	if amount > w.Balance {
+		return ErrInsufficientFunds
 	}
+
+	w.Balance -= amount
+	return nil
 }
 
 func main() {
@@ -49,7 +54,7 @@ func main() {
 			scanner.Scan()
 			userAmount, err = strconv.Atoi(scanner.Text())
 			if err != nil {
-				fmt.Errorf("Invalid number: %v\nPlease only enter whole numbers!", err)
+				fmt.Println("invalid number:", err)
 			}
 		}
 
@@ -57,12 +62,17 @@ func main() {
 		case 1:
 			w.Deposit(Bitcoin(userAmount))
 		case 2:
-			w.Withdraw(Bitcoin(userAmount))
+			err := w.Withdraw(Bitcoin(userAmount))
+			if err != nil {
+				fmt.Println(err)
+			}
 		case 3:
 			fmt.Println("Your Bitcoin Amount: $" + strconv.Itoa(int(w.Balance)))
 		case 4:
 			fmt.Println("\nSee you soon!")
 			return
+		default:
+			fmt.Println("Error! Please enter a number that is listed.")
 		}
 	}
 
